@@ -1,0 +1,150 @@
+﻿Record ID,Study ID,Date of Measurement,Age,Sex,handedness,Ethnic Group,Primary diagnosis,Psychiatric diagnosis 1
+1,SMS_001,18.08.21,56.9,Female,,,Sleep-related breathing disorders,
+2,SMS_002,09.08.21,48.3,Female,right,,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+3,SMS_003,09.08.21,47.6,Male,,Caucasian,Sleep-related breathing disorders,"F40-F48: Neurotic, stress-related and somatoform disorders"
+4,SMS_004,11.08.21,55.6,Male,,Caucasian,Sleep-related breathing disorders,
+5,SMS_005,25.08.21,62.4,Female,,Caucasian,Sleep-related breathing disorders,
+6,SMS_006,04.11.21,47.6,Female,right,Caucasian,Insomnia,
+7,SMS_007,31.08.21,62.3,Male,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+8,SMS_008,03.09.21,63.2,Male,left,Caucasian,Sleep-related breathing disorders,
+9,SMS_009,09.09.21,30.5,Male,right,Caucasian,Sleep-related breathing disorders,
+10,SMS_010,11.10.21,66.2,Male,,Caucasian,Sleep-related breathing disorders,
+11,SMS_011,15.09.21,48,Male,right,Caucasian,Sleep-related breathing disorders,
+12,SMS_012,15.10.21,39.9,Female,right,Caucasian,Parasomnias,
+13,SMS_013,26.09.21,42.9,Male,right,Caucasian,Sleep-related breathing disorders,
+14,SMS_014,16.09.21,25.3,Female,right,Caucasian,Parasomnias,F30-F39: Mood [affective] disorders
+15,SMS_015,24.09.21,51.1,Female,right,Caucasian,Sleep-related breathing disorders,
+16,SMS_016,20.09.21,36.6,Female,right,Caucasian,Central disorders of hypersomnolence,
+17,SMS_017,,,,,,,
+18,SMS_018,,,,,,,
+19,SMS_019,13.10.21,60.1,Female,right,Caucasian,Sleep-related breathing disorders,
+20,SMS_020,30.11.21,28.6,Female,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+21,SMS_021,,,,,,,
+22,SMS_022,05.10.21,65.5,Female,right,Caucasian,Sleep-related breathing disorders,"F00-F09: Organic, including symptomatic, mental disorders"
+23,SMS_023,,,,,,,
+24,SMS_024,29.10.21,57.8,Female,right,Caucasian,Sleep-related breathing disorders,
+25,SMS_025,,,,,,,
+26,SMS_026,21.11.21,37.4,Male,right,Caucasian,Sleep-related breathing disorders,F90-F98: behavioural and emotional disorders with onset usually occurring in childhood and adolescence
+27,SMS_027,,,,,,,
+28,SMS_028,25.11.21,84.6,Female,right,Caucasian,Insomnia,
+29,SMS_029,28.11.21,56.6,Female,right,Caucasian,Circadian rhythm sleep-wake disorders,
+30,SMS_030,,,,,,,
+31,SMS_031,09.11.21,52.9,Male,left,Caucasian,Central disorders of hypersomnolence,
+32,SMS_032,15.11.21,26.3,Female,right,Caucasian,Central disorders of hypersomnolence,
+33,SMS_033,03.12.21,60.3,Male,right,Caucasian,,
+34,SMS_034,20.12.21,45.3,Male,right,Caucasian,Sleep-related breathing disorders,
+35,SMS_035,13.12.21,19.4,Female,right,Caucasian,,
+36,SMS_036,07.03.22,41.9,Female,right,Caucasian,Sleep-related breathing disorders,"F40-F48: Neurotic, stress-related and somatoform disorders"
+37,SMS_037,04.01.22,18.2,Male,right,Caucasian,Central disorders of hypersomnolence,
+38,SMS_038,06.01.22,75.3,Male,right,Caucasian,Sleep-related breathing disorders,
+39,SMS_039,07.01.22,25,Female,right,Caucasian,Central disorders of hypersomnolence,
+40,SMS_040,05.01.22,42.1,Male,right,Caucasian,Sleep-related breathing disorders,
+41,SMS_041,,,,,,,
+42,SMS_042,10.01.22,32.1,Female,right,Caucasian,Central disorders of hypersomnolence,
+43,SMS_043,24.01.22,54.4,Male,right,Caucasian,Insomnia,F30-F39: Mood [affective] disorders
+44,SMS_044,19.01.22,52.5,Female,right,Caucasian,Insomnia,
+45,SMS_045,26.01.22,34.2,Female,right,Caucasian,Parasomnias,
+46,SMS_046,17.01.22,36.1,Female,right,Caucasian,Central disorders of hypersomnolence,F30-F39: Mood [affective] disorders
+47,SMS_047,20.01.22,43.7,Female,right,Caucasian,Sleep-related breathing disorders,
+48,SMS_048,30.01.22,42.1,Female,right,Caucasian,Parasomnias,
+49,SMS_049,27.01.22,54.7,Female,right,Caucasian,Central disorders of hypersomnolence,
+50,SMS_050,23.01.22,73.7,Male,,,Sleep-related breathing disorders,
+51,SMS_051,03.02.22,45.2,Female,right,Caucasian,Sleep-related breathing disorders,
+52,SMS_052,31.01.22,27.3,Male,right,Caucasian,Sleep-related breathing disorders,
+53,SMS_053,01.02.22,46.5,Male,right,Caucasian,Sleep-related breathing disorders,
+54,SMS_054,08.02.22,56.5,Male,right,Caucasian,Central disorders of hypersomnolence,
+55,SMS_055,11.02.22,68.1,Female,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+56,SMS_056,18.02.22,46.7,Female,right,Caucasian,,
+57,SMS_057,20.02.22,24.7,Male,right,Caucasian,Other sleep disorders,F30-F39: Mood [affective] disorders
+58,SMS_058,24.02.22,51.3,Female,right,Caucasian,Insomnia,
+59,SMS_059,,,,,,,
+60,SMS_060,25.02.22,29,Female,left,Caucasian,,
+61,SMS_061,27.02.22,50.2,Female,right,Caucasian,Insomnia,F30-F39: Mood [affective] disorders
+62,SMS_062,01.03.22,65.2,Male,,,Sleep-related breathing disorders,
+63,SMS_063,02.03.22,53,Male,right,Caucasian,Sleep-related breathing disorders,
+64,SMS_064,18.03.22,61.1,Male,right,Caucasian,Sleep-related breathing disorders,
+65,SMS_065,08.03.22,57.7,Male,right,Caucasian,Sleep-related breathing disorders,
+66,SMS_066,06.03.22,59.4,Female,right,Caucasian,Sleep-related breathing disorders,
+67,SMS_067,20.03.22,82,Female,right,Caucasian,Sleep-related breathing disorders,
+68,SMS_068,17.03.22,56.8,Female,right,Caucasian,,
+69,SMS_069,03.04.22,50,Male,right,Caucasian,,
+70,SMS_070,04.04.22,76.4,Male,right,Caucasian,Sleep-related breathing disorders,
+71,SMS_071,21.03.22,23.5,Female,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+72,SMS_072,24.03.22,57.3,Male,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+73,SMS_073,02.05.22,21.6,Female,left,Caucasian,Other sleep disorders,
+74,SMS_074,13.04.22,52.1,Female,right,Caucasian,,
+75,SMS_075,01.04.22,50.1,Female,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+76,SMS_076,27.04.22,74.2,Male,right,Caucasian,Sleep-related breathing disorders,
+77,SMS_077,06.04.22,45.3,Female,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+78,SMS_078,16.05.22,64.8,Male,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+79,SMS_079,10.04.22,27.8,Male,right,Caucasian,,
+80,SMS_080,11.04.22,63.7,Male,right,Caucasian,Sleep-related breathing disorders,
+81,SMS_081,20.04.22,19.5,Female,right,Caucasian,Other sleep disorders,F30-F39: Mood [affective] disorders
+82,SMS_082,,,,,,,
+83,SMS_083,28.04.22,37.3,Female,right,Caucasian,,
+84,SMS_084,,,Female,,,Sleep-related breathing disorders,
+85,SMS_085,13.05.22,30.5,Female,right,Caucasian,Sleep-related breathing disorders,
+86,SMS_086,01.05.22,20.1,Female,right,Caucasian,,
+87,SMS_087,10.05.22,40.2,Male,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+88,SMS_088,,,,,,,
+89,SMS_089,22.05.22,67.8,Male,right,Caucasian,Sleep-related movement disorders,
+90,SMS_090,18.05.22,29.8,Male,left,Caucasian,Sleep-related breathing disorders,F90-F98: behavioural and emotional disorders with onset usually occurring in childhood and adolescence
+91,SMS_091,27.05.22,21.5,Female,,,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+92,SMS_092,23.05.22,19.3,Female,right,Caucasian,Central disorders of hypersomnolence,
+93,SMS_093,24.05.22,56.4,Female,right,Asian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+94,SMS_094,30.05.22,43.3,Female,right,Caucasian,Sleep-related movement disorders,
+95,SMS_095,29.05.22,21,Female,right,Caucasian,Central disorders of hypersomnolence,F90-F98: behavioural and emotional disorders with onset usually occurring in childhood and adolescence
+96,SMS_096,07.06.22,39.7,Female,right,Caucasian,,
+97,SMS_097,10.06.22,51.2,Male,right,Caucasian,Sleep-related breathing disorders,
+98,SMS_098,21.06.22,37.6,Female,right,Caucasian,,
+99,SMS_099,17.06.22,53.4,Male,right,Caucasian,Sleep-related breathing disorders,
+100,SMS_100,09.06.22,47.2,Male,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+101,SMS_101,08.06.22,27,Male,right,Caucasian,,F30-F39: Mood [affective] disorders
+102,SMS_102,14.06.22,33.8,Male,,,Sleep-related breathing disorders,
+103,SMS_103,13.06.22,57,Female,right,,,"F40-F48: Neurotic, stress-related and somatoform disorders"
+104,SMS_104,03.07.22,62.4,Male,right,Caucasian,Parasomnias,F30-F39: Mood [affective] disorders
+105,SMS_105,28.06.22,62.4,Male,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+106,SMS_106,27.06.22,61.6,Male,,,Sleep-related breathing disorders,
+107,SMS_107,22.06.22,23.6,Male,right,Caucasian,Sleep-related breathing disorders,
+108,SMS_108,01.07.22,57.2,Female,right,Caucasian,Sleep-related breathing disorders,
+109,SMS_109,04.07.22,35.1,Female,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+110,SMS_110,07.07.22,25.1,Female,,,Other sleep disorders,
+111,SMS_111,17.07.22,54.4,Female,right,Caucasian,,
+112,SMS_112,21.07.22,49.5,Female,,,Sleep-related breathing disorders,
+113,SMS_113,26.07.22,41.5,Female,right,Caucasian,Sleep-related breathing disorders,
+114,SMS_114,20.07.22,49.8,Male,,,Sleep-related breathing disorders,
+115,SMS_115,,,Female,,,,
+116,SMS_116,,,Female,,,,
+117,SMS_117,27.07.22,58.2,Female,right,Caucasian,,
+118,SMS_118,03.08.22,30.3,Male,right,Caucasian,,
+119,SMS_119,11.08.22,49.3,Male,left,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+120,SMS_120,15.08.22,50.9,Female,right,Caucasian,Sleep-related breathing disorders,"F40-F48: Neurotic, stress-related and somatoform disorders"
+121,SMS_121,16.08.22,79.1,Female,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+122,SMS_122,17.08.22,34.1,Male,right,Caucasian,Sleep-related breathing disorders,
+123,SMS_123,21.08.22,52.6,Female,left,Caucasian,Sleep-related breathing disorders,
+124,SMS_124,26.08.22,30,Male,right,Caucasian,Sleep-related breathing disorders,
+125,SMS_125,30.08.22,74.9,Male,,,Sleep-related breathing disorders,
+126,SMS_126,23.08.22,22.3,Female,,,Central disorders of hypersomnolence,F30-F39: Mood [affective] disorders
+127,SMS_127,24.08.22,34.1,Male,right,Caucasian,Central disorders of hypersomnolence,
+128,SMS_128,27.09.22,51.6,Male,,,Other sleep disorders,
+129,SMS_129,06.09.22,25.2,Female,right,Caucasian,,F30-F39: Mood [affective] disorders
+130,SMS_130,04.09.22,18.6,Female,right,Caucasian,Central disorders of hypersomnolence,F30-F39: Mood [affective] disorders
+131,SMS_131,14.09.22,31.7,Female,right,Caucasian,Sleep-related breathing disorders,
+132,SMS_132,20.09.22,38,Male,right,Caucasian,,
+133,SMS_133,08.09.22,71.9,Female,right,Caucasian,Sleep-related breathing disorders,"F20-F29: Schizophrenia, schizotypal and delusional disorders"
+134,SMS_134,21.09.22,33.2,Female,right,Caucasian,,
+135,SMS_135,02.10.22,21.9,Female,right,Caucasian,,
+136,SMS_136,12.09.22,42.1,Female,right,,,
+137,SMS_137,19.09.22,38.5,Male,right,Caucasian,Sleep-related breathing disorders,F30-F39: Mood [affective] disorders
+138,SMS_138,26.09.22,34.6,Female,right,Caucasian,,
+139,SMS_139,28.09.22,57.4,Male,right,Caucasian,,
+140,SMS_140,29.09.22,37.6,Female,right,Caucasian,,
+141,SMS_141,30.09.22,24.5,Male,right,Caucasian,,
+142,SMS_142,09.10.22,21.5,Male,right,Caucasian,,
+143,SMS_143,07.11.22,28.5,Female,,,,
+144,SMS_144,03.10.22,27.3,Male,right,Caucasian,,
+145,SMS_145,12.10.22,47.4,Female,right,Hispanic,,
+146,SMS_146,,,Male,,,,
+147,SMS_147,03.11.22,42.6,Female,,,,
+148,SMS_148,18.10.22,22.3,Female,right,Caucasian,,
+149,SMS_149,,,Female,,,,
