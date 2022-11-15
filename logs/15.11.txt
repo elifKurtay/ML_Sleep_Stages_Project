@@ -1,0 +1,17 @@
+Meeting Notes
+
+demographics:
+- use variables "sex, gender, ethnic(?)" in first layer
+
+first goals:
+- produce single ground truths format files for all patients
+- visualise sleep stages (in half an hour) periods of sensors, mat and ground truth
+- try utils functions
+- literature review on time series classification / sleep stages analysis
+
+additional notes:
+- only use timestamps and normalise to start from 0 with 30 s intervals (can be used as index)
+- compare data in 1.5 hour intervals ? => seasonality
+- use primary diagnoses for clustering
+
+next meeting: 18.11
