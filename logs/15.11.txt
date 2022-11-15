@@ -1,12 +1,13 @@
 Meeting Notes
 
 demographics:
-- use variables "sex, gender, ethnic(?)" in first layer
+- use variables "sex, gender, ethnics(?)" in first layer
 
 first goals:
 - produce single ground truths format files for all patients
 - visualise sleep stages (in half an hour) periods of sensors, mat and ground truth
 - try utils functions
+- plot user info
 - literature review on time series classification / sleep stages analysis
 
 additional notes:
