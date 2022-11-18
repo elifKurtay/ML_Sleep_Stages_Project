@@ -1,0 +1,22 @@
+Meeting Notes
+
+achieved goals:
+- produce single ground truths format files for all patients
+- visualise sleep stages periods of sensors, mat and ground truth
+- try utils functions
+- literature review on time series classification / sleep stages analysis
+
+next goals:
+- enhance plot (show missing)
+- fill in missing values with neighboring values / look for other techniques
+- implement models on sleep stage data only: weighted classification (GD)
+- more research -> Ernesto's playlist:
+    - mse vs dynamic time wrapping with KNN?
+    - deep learning
+    - unsupervised learning
+
+additional notes:
+- can we use primary diagnoses for separating models?
+- prepare patient data methods
+
+next meeting: 22.11
