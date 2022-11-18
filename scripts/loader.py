@@ -6,8 +6,19 @@ import numpy as np
 path_ = get_read_path()
 
 
+def read_patient_data(subjectID):
+    """read patient sleep stages from data/processed"""
+    dir_path = get_write_path()
+    path = dir_path + "/SMS_" + subjectID + ".csv"
+    if os.path.exists(path):
+        data = pd.read_csv(path, index_col='timestamp_local')
+        return data
+    return True
+
+
 def write_data():
-    """074 and 058 has problem with Somnomedics reading"""
+    """creates all patient sleep stages by sensor
+    and writes in data/processed"""
     path = get_write_path()
     for subjectID in PARTICIPANT_IDS:
         data = get_sleepstages(subjectID)
