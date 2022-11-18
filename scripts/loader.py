@@ -21,6 +21,8 @@ def get_sleepstages(subjectID):
     psg = get_sleep_class_psg(subjectID)
     mat = get_EMFIT_sleep_stages_file(subjectID, "001505")
     if radar[0] and psg[0] and mat[0]:
+        # merged = pd.merge(radar[1], mat[1], left_index=True, right_index=True)
+        # data = pd.merge(merged, psg[1], left_index=True, right_index=True)
         data = radar[1].join(mat[1]).join(psg[1])
         return data
     else:
@@ -194,29 +196,36 @@ def get_sleepstages_psg_somnomedics(subjectID, _path):
     2 = Light = 2
     3 = Deep  = 1
     nan= ...  = 5 <-- No Sleep Stage classified, due to (movement) artefacts"""
-    path_to_file = os.path.join(_path, "SMS_" + subjectID, "somnomedics", "Sleep profile.txt")
-    if os.path.exists(path_to_file):
-        with open(path_to_file) as f:
-            lines = f.readlines()
-        if len(lines) <= 7:  # intro lines
-            print(f'No Somnomedics Data for Participant: {subjectID}')
-            return (False,)
-        data = lines[7:]
-        data = [a[:-1].split(";") for a in data]
-        data_somnomedics = pd.DataFrame(data, columns = ['timestamp_local', 'sleep_stage'])
-        data_somnomedics["sleep_stage"].replace({" N3":"3_Stage_Deep", " N2":"2_Stage_Light", " N1":"2_Stage_Light",
-                                                 " REM":"1_Stage_REM", " Wake": "0_Stage_Wake", " Artefact": np.NaN, " A": np.NaN}, inplace=True)
-        data_somnomedics["sleep_stage_num_psg"] = data_somnomedics["sleep_stage"]
-        data_somnomedics["sleep_stage_num_psg"].replace({"3_Stage_Deep":3, "2_Stage_Light":2, "1_Stage_REM":1, "0_Stage_Wake":0}, inplace=True)
-
-        data_somnomedics['timestamp_local'] =pd.to_datetime(data_somnomedics['timestamp_local']).dt.tz_localize('Europe/Paris')
-
-        data_somnomedics['timestamp_local']=data_somnomedics['timestamp_local']+ pd.Timedelta('30s')
-
-        data_somnomedics.set_index('timestamp_local', inplace = True)
-        del data_somnomedics['sleep_stage']
-        return (True, data_somnomedics)
+    path_to_english_file = os.path.join(_path, "SMS_" + subjectID, "somnomedics", "Sleep profile.txt")
+    path_to_german_file = os.path.join(_path, "SMS_" + subjectID, "somnomedics", "Schlafprofil.txt")
+    if os.path.exists(path_to_english_file):
+        path_to_file = path_to_english_file
+    elif os.path.exists(path_to_german_file):
+        path_to_file = path_to_german_file
     else:
         print(f'No Somnomedics Data for Participant: {subjectID}')
         return (False,)
+
+    with open(path_to_file) as f:
+        lines = f.readlines()
+    if len(lines) <= 7:  # intro lines
+        print(f'No Somnomedics Data for Participant: {subjectID}')
+        return (False,)
+    data = lines[7:]
+    data = [a[:-1].split("; ") for a in data]
+    data_somnomedics = pd.DataFrame(data, columns = ['timestamp_local', 'sleep_stage'])
+    data_somnomedics["sleep_stage"].replace({"N3":"3_Stage_Deep", "N2":"2_Stage_Light", "N1":"2_Stage_Light",
+                                             "REM":"1_Stage_REM", "Wake": "0_Stage_Wake", "Artefact": np.NaN,
+                                             "A": np.NaN, "Artefakt": np.NaN, "Wach": "0_Stage_Wake"}, inplace=True)
+    data_somnomedics["sleep_stage_num_psg"] = data_somnomedics["sleep_stage"]
+    data_somnomedics["sleep_stage_num_psg"].replace({"3_Stage_Deep":3, "2_Stage_Light":2, "1_Stage_REM":1, "0_Stage_Wake":0}, inplace=True)
+
+    data_somnomedics['timestamp_local'] =pd.to_datetime(data_somnomedics['timestamp_local']).dt.tz_localize('Europe/Paris')
+
+    data_somnomedics['timestamp_local']=data_somnomedics['timestamp_local']+ pd.Timedelta('30s')
+
+    data_somnomedics.set_index('timestamp_local', inplace=True)
+    del data_somnomedics['sleep_stage']
+    return (True, data_somnomedics)
+
 
