@@ -1,5 +1,4 @@
 import os
-from scripts.loader import get_sleepstages
 
 PATH = "../data/"
 RAW_PATH = PATH + "raw/"
@@ -36,12 +35,3 @@ PARTICIPANT_IDS = ["001", "002", "003", "008", "009", "011", "012", "013",
                    "092", "093", "094", "098", "101", "103", "106", "107",
                    "111", "114", "117", "122", "125", "126", "129", "133"]
 
-
-def write_data():
-    """074 and 058 has problem with somnofy reading"""
-    path = get_write_path()
-    for subjectID in PARTICIPANT_IDS:
-        data = get_sleepstages(subjectID)
-        if data is not None:
-            data.to_csv(path + "/SMS_" + subjectID + ".csv", index=True)
-    return True

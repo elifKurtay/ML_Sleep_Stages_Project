@@ -6,6 +6,16 @@ import numpy as np
 path_ = get_read_path()
 
 
+def write_data():
+    """074 and 058 has problem with Somnomedics reading"""
+    path = get_write_path()
+    for subjectID in PARTICIPANT_IDS:
+        data = get_sleepstages(subjectID)
+        if data is not None:
+            data.to_csv(path + "/SMS_" + subjectID + ".csv", index=True)
+    return True
+
+
 def get_sleepstages(subjectID):
     radar = get_sleepstages_radar(subjectID, path_)
     psg = get_sleep_class_psg(subjectID)
@@ -207,6 +217,6 @@ def get_sleepstages_psg_somnomedics(subjectID, _path):
         del data_somnomedics['sleep_stage']
         return (True, data_somnomedics)
     else:
-        print(f'No Somnofy Data for Participant: {subjectID}')
+        print(f'No Somnomedics Data for Participant: {subjectID}')
         return (False,)
 
