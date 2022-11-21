@@ -29,7 +29,7 @@ def write_data():
 
 def get_sleepstages(subjectID):
     radar = get_sleepstages_radar(subjectID, path_)
-    psg = get_sleep_class_psg(subjectID)
+    psg = get_sleep_class_psg(subjectID, path_)
     mat = get_EMFIT_sleep_stages_file(subjectID, "001505")
     if radar[0] and psg[0] and mat[0]:
         # merged = pd.merge(radar[1], mat[1], left_index=True, right_index=True)
@@ -132,7 +132,7 @@ def get_sleepstages_radar(subjectID, _path):
         return (False,)
 
 
-def get_sleep_class_psg(subjectID):
+def get_sleep_class_psg(subjectID, path_):
     """gets truth values for sleep stage of a subject
         either from RemLogic or Somnomedics in 30s intervals as index
         Returns a Tuple:
@@ -232,7 +232,7 @@ def get_sleepstages_psg_somnomedics(subjectID, _path):
     data_somnomedics["sleep_stage_num_psg"] = data_somnomedics["sleep_stage"]
     data_somnomedics["sleep_stage_num_psg"].replace({"3_Stage_Deep":3, "2_Stage_Light":2, "1_Stage_REM":1, "0_Stage_Wake":0}, inplace=True)
 
-    data_somnomedics['timestamp_local'] =pd.to_datetime(data_somnomedics['timestamp_local']).dt.tz_localize('Europe/Paris')
+    data_somnomedics['timestamp_local'] =pd.to_datetime(data_somnomedics['timestamp_local'], format="%d.%m.%Y %H:%M:%S,%f").dt.tz_localize('Europe/Paris')
 
     data_somnomedics['timestamp_local']=data_somnomedics['timestamp_local']+ pd.Timedelta('30s')
 
