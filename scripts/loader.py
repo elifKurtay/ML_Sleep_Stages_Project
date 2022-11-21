@@ -224,6 +224,7 @@ def get_sleepstages_psg_somnomedics(subjectID, _path):
         return (False,)
     data = lines[7:]
     data = [a[:-1].split("; ") for a in data]
+    print(data)
     data_somnomedics = pd.DataFrame(data, columns = ['timestamp_local', 'sleep_stage'])
     data_somnomedics["sleep_stage"].replace({"N3":"3_Stage_Deep", "N2":"2_Stage_Light", "N1":"2_Stage_Light",
                                              "REM":"1_Stage_REM", "Wake": "0_Stage_Wake", "Artefact": np.NaN,
