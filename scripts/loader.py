@@ -83,34 +83,38 @@ def get_EMFIT_sleep_stages_file(subjectID, emfitID, _path=path_, shift="0s"):
         return (False,)
 
 
-def get_somnofy_data(subjectID, _path, shift = "0s"):
+def get_somnofy_data(subjectID, _path, shift="0s"):
     """Returns a Tuple:
         [0]:boolean --> True, if request was sucessefull
         [1]: DataFrame with LOCAL timestamps as Index and the rest as Columne entries
     """
-    path_to_subject_root= f'{_path}/SMS_{subjectID}'
-    path_to_subject_psg= f'{path_to_subject_root}/Somnofy'
+    path_to_subject_root = f'{_path}/SMS_{subjectID}'
+    path_to_subject_psg = f'{path_to_subject_root}/Somnofy'
 
     if os.path.exists(path_to_subject_psg):
-        file_list= os.listdir(path_to_subject_psg)
+        file_list = os.listdir(path_to_subject_psg)
         if len(file_list) != 1:
             print(f'ERROR: more than 1 or no file in folder {path_to_subject_psg}')
             return (False,)
         else:
-            data_somnofy =  pd.read_csv(f'{path_to_subject_psg}/{file_list[0]}')
+            data_somnofy = pd.read_csv(f'{path_to_subject_psg}/{file_list[0]}')
 
-            data_somnofy["sleep_stage"].replace({1:"3_Stage_Deep", 2:"2_Stage_Light", 3:"1_Stage_REM", 4: "0_Stage_Wake", 5: np.NaN}, inplace=True)
-            data_somnofy["sleep_stage_num_somnofy"]= data_somnofy["sleep_stage"]
-            data_somnofy["sleep_stage_num_somnofy"].replace({"3_Stage_Deep":3, "2_Stage_Light":2, "1_Stage_REM":1, "0_Stage_Wake":0}, inplace=True)
+            data_somnofy["sleep_stage"].replace(
+                {1: "3_Stage_Deep", 2: "2_Stage_Light", 3: "1_Stage_REM", 4: "0_Stage_Wake", 5: np.NaN}, inplace=True)
+            data_somnofy["sleep_stage_num_somnofy"] = data_somnofy["sleep_stage"]
+            data_somnofy["sleep_stage_num_somnofy"].replace(
+                {"3_Stage_Deep": 3, "2_Stage_Light": 2, "1_Stage_REM": 1, "0_Stage_Wake": 0}, inplace=True)
 
-            data_somnofy['timestamp_local'] =pd.to_datetime(data_somnofy['timestamp_local']).dt.tz_localize('Europe/Paris')
+            data_somnofy['timestamp_local'] = pd.to_datetime(data_somnofy['timestamp_local']).dt.tz_localize(
+                'Europe/Paris')
 
-            data_somnofy['timestamp_local']=data_somnofy['timestamp_local']+ pd.Timedelta('30s')
+            data_somnofy['timestamp_local'] = data_somnofy['timestamp_local'] + pd.Timedelta('30s')
 
-            data_somnofy.set_index('timestamp_local', inplace = True)
-            data_somnofy_resampled = data_somnofy.resample('30s').median(numeric_only=False).drop("Unnamed: 0",axis= 1)
-            data_somnofy_resampled["sleep_stage_num_somnofy"] = data_somnofy_resampled["sleep_stage_num_somnofy"].round(decimals=0)
-        return (True,data_somnofy_resampled)
+            data_somnofy.set_index('timestamp_local', inplace=True)
+            data_somnofy_resampled = data_somnofy.resample('30s').median(numeric_only=False).drop("Unnamed: 0", axis=1)
+            data_somnofy_resampled["sleep_stage_num_somnofy"] = data_somnofy_resampled["sleep_stage_num_somnofy"].round(
+                decimals=0)
+        return (True, data_somnofy_resampled)
     else:
         print(f'No Somnofy Data for Participant: {subjectID}')
         return (False,)
@@ -171,30 +175,32 @@ def get_sleepstages_psg_remlogic(subjectID, _path):
     1 = REM   = SLEEP-REM
     2 = Light = SLEEP-S1 and  SLEEP-S2
     3 = Deep  = SLEEP-S3"""
-    acq_time = get_remlogic_tsv_file(subjectID, "scans",_path)
+    acq_time = get_remlogic_tsv_file(subjectID, "scans", _path)
     if acq_time is None:
-        return (False, )
+        return (False,)
     acq_time = pd.to_datetime(acq_time.columns[1])
 
-    event_data = get_remlogic_tsv_file(subjectID, "events",_path)
-    sleep_data= event_data[(event_data['trial_type']=="SLEEP-S0")|
-                      (event_data['trial_type']=="SLEEP-S1")|
-                      (event_data['trial_type']=="SLEEP-S2")|
-                      (event_data['trial_type']=="SLEEP-S3")|
-                      (event_data['trial_type']=="SLEEP-REM")].reset_index().drop("index",axis=1)
+    event_data = get_remlogic_tsv_file(subjectID, "events", _path)
+    sleep_data = event_data[(event_data['trial_type'] == "SLEEP-S0") |
+                            (event_data['trial_type'] == "SLEEP-S1") |
+                            (event_data['trial_type'] == "SLEEP-S2") |
+                            (event_data['trial_type'] == "SLEEP-S3") |
+                            (event_data['trial_type'] == "SLEEP-REM")].reset_index().drop("index", axis=1)
 
-    sleep_data["time"]= pd.Series(acq_time).repeat(len(sleep_data)).values + pd.to_timedelta(sleep_data.onset, unit='s')
+    sleep_data["time"] = pd.Series(acq_time).repeat(len(sleep_data)).values + pd.to_timedelta(sleep_data.onset,
+                                                                                              unit='s')
 
-    sleep_data['trial_type'].replace({"SLEEP-S0":"0_Stage_Wake",
-             "SLEEP-S1":"2_Stage_Light",
-             "SLEEP-S2":"2_Stage_Light",
-             "SLEEP-S3":"3_Stage_Deep",
-             "SLEEP-REM":"1_Stage_REM"}, inplace=True)
+    sleep_data['trial_type'].replace({"SLEEP-S0": "0_Stage_Wake",
+                                      "SLEEP-S1": "2_Stage_Light",
+                                      "SLEEP-S2": "2_Stage_Light",
+                                      "SLEEP-S3": "3_Stage_Deep",
+                                      "SLEEP-REM": "1_Stage_REM"}, inplace=True)
 
-    sleep_data["sleep_stage_num_psg"]= sleep_data["trial_type"]
-    sleep_data["sleep_stage_num_psg"].replace({"3_Stage_Deep":3, "2_Stage_Light":2, "1_Stage_REM":1, "0_Stage_Wake":0}, inplace=True)
-    sleep_data['timestamp_local'] =pd.to_datetime(sleep_data['time']).dt.tz_localize('Europe/Paris')
-    sleep_data.set_index('timestamp_local', inplace= True)
+    sleep_data["sleep_stage_num_psg"] = sleep_data["trial_type"]
+    sleep_data["sleep_stage_num_psg"].replace(
+        {"3_Stage_Deep": 3, "2_Stage_Light": 2, "1_Stage_REM": 1, "0_Stage_Wake": 0}, inplace=True)
+    sleep_data['timestamp_local'] = pd.to_datetime(sleep_data['time']).dt.tz_localize('Europe/Paris')
+    sleep_data.set_index('timestamp_local', inplace=True)
     return (True, sleep_data[['sleep_stage_num_psg']])
 
 
@@ -224,20 +230,22 @@ def get_sleepstages_psg_somnomedics(subjectID, _path):
         return (False,)
     data = lines[7:]
     data = [a[:-1].split("; ") for a in data]
-    print(data)
-    data_somnomedics = pd.DataFrame(data, columns = ['timestamp_local', 'sleep_stage'])
-    data_somnomedics["sleep_stage"].replace({"N3":"3_Stage_Deep", "N2":"2_Stage_Light", "N1":"2_Stage_Light",
-                                             "REM":"1_Stage_REM", "Wake": "0_Stage_Wake", "Artefact": np.NaN,
+    data_somnomedics = pd.DataFrame(data, columns=['timestamp_local', 'sleep_stage'])
+    data_somnomedics["sleep_stage"].replace({"N3": "3_Stage_Deep", "N2": "2_Stage_Light", "N1": "2_Stage_Light",
+                                             "REM": "1_Stage_REM", "Wake": "0_Stage_Wake", "Artefact": np.NaN,
                                              "A": np.NaN, "Artefakt": np.NaN, "Wach": "0_Stage_Wake"}, inplace=True)
     data_somnomedics["sleep_stage_num_psg"] = data_somnomedics["sleep_stage"]
-    data_somnomedics["sleep_stage_num_psg"].replace({"3_Stage_Deep":3, "2_Stage_Light":2, "1_Stage_REM":1, "0_Stage_Wake":0}, inplace=True)
+    data_somnomedics["sleep_stage_num_psg"].replace({"3_Stage_Deep": 3, "2_Stage_Light": 2, "1_Stage_REM": 1,
+                                                     "0_Stage_Wake": 0}, inplace=True)
+    try:
+        data_somnomedics['timestamp_local'] = pd.to_datetime(data_somnomedics['timestamp_local'],
+                                                             format="%d.%m.%Y %H:%M:%S,%f").dt.tz_localize('Europe/Paris')
+    except ValueError:
+        print(f'Date format wrong for Participant: {subjectID}')
+        data_somnomedics['timestamp_local'] = pd.to_datetime(data_somnomedics['timestamp_local']).dt.tz_localize('Europe/Paris')
 
-    data_somnomedics['timestamp_local'] =pd.to_datetime(data_somnomedics['timestamp_local'], format="%d.%m.%Y %H:%M:%S,%f").dt.tz_localize('Europe/Paris')
-
-    data_somnomedics['timestamp_local']=data_somnomedics['timestamp_local']+ pd.Timedelta('30s')
+    data_somnomedics['timestamp_local'] = data_somnomedics['timestamp_local'] + pd.Timedelta('30s')
 
     data_somnomedics.set_index('timestamp_local', inplace=True)
     del data_somnomedics['sleep_stage']
     return (True, data_somnomedics)
-
-
