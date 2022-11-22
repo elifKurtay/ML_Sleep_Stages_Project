@@ -1,0 +1,27 @@
+Meeting Notes
+
+achieved goals:
+- enhance plot (show missing)
+- fill in missing values with neighboring values / look for other techniques https://towardsdatascience.com/4-techniques-to-handle-missing-values-in-time-series-data-c3568589b5a8
+- implement models on sleep stage data only: knn classification
+- more research -> Ernesto's playlist:
+    - mse vs dynamic time wrapping with KNN?
+    - deep learning
+    - unsupervised learning
+
+next goals:
+- elif check patient 15! date format! is emfit sleepstages mapped right?
+- elif create (5 stage sleep stages) & raw datas & remove beginning/end wake
+- enhance plot (at which psg values is nan for radar)
+- abdullah fillin
+- abdullah ml model on sleep stage fusion
+- ernesto model plans:
+    - CNN on raw before classification
+    - deep learning paper
+
+
+additional notes:
+- can we use primary diagnoses for separating models?
+- prepare patient data methods
+
+next meeting:
