@@ -25,3 +25,4 @@ additional notes:
 - prepare patient data methods
 
 next meeting:
+- patient 038 has only WAKE stage in radar
