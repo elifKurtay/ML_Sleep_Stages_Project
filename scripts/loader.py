@@ -28,14 +28,16 @@ def write_data():
     return True
 
 
-def get_sleepstages(subjectID):
+def get_sleepstages(subjectID, inner=True):
     radar = get_sleepstages_radar(subjectID, path_)
     psg = get_sleep_class_psg(subjectID, path_)
     mat = get_EMFIT_sleep_stages_file(subjectID, "001505")
     if radar[0] and psg[0] and mat[0]:
-        # merged = pd.merge(radar[1], mat[1], left_index=True, right_index=True)
-        # data = pd.merge(merged, psg[1], left_index=True, right_index=True)
-        data = radar[1].join(mat[1]).join(psg[1])
+        if inner:
+            merged = pd.merge(radar[1], mat[1], left_index=True, right_index=True)
+            data = pd.merge(merged, psg[1], left_index=True, right_index=True)
+        else:
+            data = radar[1].join(mat[1]).join(psg[1])
         return data
     else:
         print("PROBLEM WITH EXTRACTING A DATA")
