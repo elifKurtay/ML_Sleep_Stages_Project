@@ -1,5 +1,8 @@
 import numpy as np
+import seaborn as sn
 import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+import pandas as pd
 
 
 def plot_missing_sleepstages(df):
@@ -17,4 +20,13 @@ def plot_missing_sleepstages(df):
             unique_elements, counts_elements = np.unique(truth_vals[missing_ind], return_counts=True)
             print(np.asarray((unique_elements, counts_elements)))
         plt.scatter(missing_ind, y, color=color)
+    plt.show()
+
+
+def plot_conf_matrix(preds, labels):
+    conf_matrix = confusion_matrix(preds, labels)
+    print(conf_matrix)
+    df_cm = pd.DataFrame(conf_matrix, range(4), range(4))
+    ax = sn.heatmap(df_cm, annot=True, annot_kws={"size": 14}, fmt=".3g")
+    ax.set(xlabel='Actual', ylabel='Prediction')
     plt.show()
