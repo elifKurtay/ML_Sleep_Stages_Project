@@ -24,5 +24,4 @@ additional notes:
 - can we use primary diagnoses for separating models?
 - prepare patient data methods
 
-next meeting:
-- patient 038 has only WAKE stage in radar
+next meeting: 25.11

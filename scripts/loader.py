@@ -2,6 +2,7 @@ from constants import *
 import pandas as pd
 import os
 import numpy as np
+import datetime
 
 path_ = get_read_path()
 
@@ -205,6 +206,29 @@ def get_sleepstages_psg_remlogic(subjectID, _path):
 
 
 # Somnomedics FUNCTIONS
+def add_date(data, start_date):
+    if "\n" in start_date:
+        start_date = start_date[:10]
+
+    if len(start_date) == 9:
+        second_day = datetime.datetime.strptime(start_date, "%d-%b-%y").date()
+    elif len(start_date) == 11:
+        second_day = datetime.datetime.strptime(start_date, "%d-%b-%Y").date()
+    else:
+        second_day = datetime.datetime.strptime(start_date, "%d.%m.%Y").date()
+
+    second_day += datetime.timedelta(days=1)
+    second_day = second_day.strftime("%d.%m.%Y")
+    # print(start_date + " - " + second_day)
+
+    current_day = start_date
+    for i in range(len(data)):
+        if data[i][0] == "00:00:00,000":
+            current_day = second_day
+        data[i][0] = current_day + " " + data[i][0]
+    return data
+
+
 def get_sleepstages_psg_somnomedics(subjectID, _path):
     """    Function to get Sleepstages from Somnomedics Report. the stages are coded the following way
     (the first column is the value now)
@@ -230,10 +254,14 @@ def get_sleepstages_psg_somnomedics(subjectID, _path):
         return (False,)
     data = lines[7:]
     data = [a[:-1].split("; ") for a in data]
+    # checking for date in datetime
+    if len(data[0][0]) < 23:
+        data = add_date(data, lines[1].split(" ")[2])
     data_somnomedics = pd.DataFrame(data, columns=['timestamp_local', 'sleep_stage'])
     data_somnomedics["sleep_stage"].replace({"N3": "3_Stage_Deep", "N2": "2_Stage_Light", "N1": "2_Stage_Light",
-                                             "REM": "1_Stage_REM", "Wake": "0_Stage_Wake", "Artefact": np.NaN,
-                                             "A": np.NaN, "Artefakt": np.NaN, "Wach": "0_Stage_Wake"}, inplace=True)
+                                             "REM": "1_Stage_REM", "Rem": "1_Stage_REM", "Wake": "0_Stage_Wake",
+                                             "Artefact": np.NaN, "A": np.NaN, "Artefakt": np.NaN,
+                                             "Wach": "0_Stage_Wake"}, inplace=True)
     data_somnomedics["sleep_stage_num_psg"] = data_somnomedics["sleep_stage"]
     data_somnomedics["sleep_stage_num_psg"].replace({"3_Stage_Deep": 3, "2_Stage_Light": 2, "1_Stage_REM": 1,
                                                      "0_Stage_Wake": 0}, inplace=True)
