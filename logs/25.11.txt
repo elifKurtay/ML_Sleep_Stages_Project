@@ -1,0 +1,19 @@
+Meeting Notes
+
+achieved goals:
+- elif check patient 15! date format! is emfit sleepstages mapped right?
+- elif remove beginning/end wake
+- enhance plot (at which psg values is nan for radar)
+
+next goals:
+- abdullah ml model on sleep stage fusion
+- ernesto on CNN
+- naive bayes
+- emfit change
+
+additional notes:
+- large enough epoch(?)
+- look for unsupervised per patient
+- go from general to detail
+
+next meeting: 29.11
