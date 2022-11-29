@@ -65,10 +65,10 @@ def get_EMFIT_sleep_stages_file(subjectID, emfitID, _path=path_, shift="0s"):
             data_EMFIT = data_EMFIT.tz_convert("Europe/Zurich")
 
             EMFIT_SLEEPCLASS_MAP = {
-                1: 0,
-                2: 1,
-                3: 2,
-                4: 3
+                1: 3,
+                2: 2,
+                3: 1,
+                4: 0
             }
 
             data_EMFIT["sleep_stage_num_emfit"] = data_EMFIT.sleep_class.map(EMFIT_SLEEPCLASS_MAP)
