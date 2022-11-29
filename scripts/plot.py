@@ -24,7 +24,7 @@ def plot_missing_sleepstages(df):
 
 
 def plot_conf_matrix(preds, labels):
-    conf_matrix = confusion_matrix(preds, labels)
+    conf_matrix = confusion_matrix(labels, preds)
     print(conf_matrix)
     df_cm = pd.DataFrame(conf_matrix, range(4), range(4))
     ax = sn.heatmap(df_cm, annot=True, annot_kws={"size": 14}, fmt=".3g")
