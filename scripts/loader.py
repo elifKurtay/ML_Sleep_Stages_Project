@@ -1,4 +1,4 @@
-from constants import *
+from helpers import *
 import pandas as pd
 import os
 import numpy as np
@@ -23,8 +23,10 @@ def write_data():
     path = get_write_path()
     for subjectID in PARTICIPANT_IDS:
         data = get_sleepstages(subjectID)
-        if data is not None:
-            data.to_csv(path + "/SMS_" + subjectID + ".csv", index=True)
+        if data is None:
+            return print(path + "/SMS_" + subjectID + ".csv CANNOT BE GENERATED")
+        imputed, _ = impute_data(subjectID, data)
+        imputed.to_csv(path + "/SMS_" + subjectID + ".csv", index=True)
     return True
 
 
@@ -38,6 +40,7 @@ def get_sleepstages(subjectID, inner=True):
             data = pd.merge(merged, psg[1], left_index=True, right_index=True)
         else:
             data = radar[1].join(mat[1]).join(psg[1])
+            print(data.shape[0])
         return data
     else:
         print("PROBLEM WITH EXTRACTING A DATA")
@@ -279,3 +282,26 @@ def get_sleepstages_psg_somnomedics(subjectID, _path):
     data_somnomedics.set_index('timestamp_local', inplace=True)
     del data_somnomedics['sleep_stage']
     return (True, data_somnomedics)
+
+
+def test_imputing():
+    """ testing different imputing methods on somnofy bc it is found to have most missing values"""
+    votes = np.zeros(3)
+    diff = np.zeros(3)
+    df = pd.DataFrame()
+
+    for subjectID in PARTICIPANT_IDS:
+        sleep_stages = read_patient_data(subjectID)
+        df["somnofy"] = sleep_stages["sleep_stage_num_somnofy"]
+        df["truth"] = sleep_stages["sleep_stage_num_psg"]
+        df["Forward Fill"] = df["somnofy"].ffill()
+        df["Backward Fill"] = df["somnofy"].bfill()
+        df["Interpolate Time"] = df["somnofy"].interpolate(option='time').round()
+        diff[0] = np.linalg.norm(df["Interpolate Time"].replace(np.nan, 0) - df["truth"].ffill().replace(np.nan, 0))
+        diff[1] = np.linalg.norm(df["Forward Fill"].replace(np.nan, 0) - df["truth"].ffill().replace(np.nan, 0))
+        diff[2] = np.linalg.norm(df["Backward Fill"].replace(np.nan, 0) - df["truth"].ffill().replace(np.nan, 0))
+        try:
+            votes[np.nanargmin(diff)] += 1
+        except ValueError:
+            print("all nan in participant " + subjectID)
+    return votes
