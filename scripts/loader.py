@@ -30,6 +30,28 @@ def write_data():
     return True
 
 
+def get_nn_patients():
+    """
+    creates all patient input for neural networks in fixed size
+    :return: 3 items:
+        - radars: numpy of all patients radar values in size MEAN_SIZE
+        - mats: numpy of all patients emfit mat values in size MEAN_SIZE
+        - patients: numpy of all patients augmented values in size MEAN_SIZE
+    """
+    patients = []
+    radars = []
+    mats = []
+    for subjectId in PARTICIPANT_IDS:
+        sleep_stages = read_patient_data(subjectId)
+        augmented = augment_data(sleep_stages)
+        radar = augmented["sleep_stage_num_somnofy"].to_numpy()
+        mat = augmented["sleep_stage_num_emfit"].to_numpy()
+        radars.append(radar)
+        mats.append(mat)
+        patients.append(augmented)
+    return np.array(radars), np.array(mats), np.array(patients)
+
+
 def get_sleepstages(subjectID, inner=True):
     radar = get_sleepstages_radar(subjectID, path_)
     psg = get_sleep_class_psg(subjectID, path_)
