@@ -46,6 +46,8 @@ def get_nn_patients():
     patients = []
     radars = []
     mats = []
+    x = []
+    y = []
     for subjectId in PARTICIPANT_IDS:
         sleep_stages = read_patient_data(subjectId)
         augmented = augment_data(sleep_stages)
@@ -54,7 +56,9 @@ def get_nn_patients():
         radars.append(radar)
         mats.append(mat)
         patients.append(augmented)
-    return np.array(radars), np.array(mats), np.array(patients)
+        x.append(augmented[["sleep_stage_num_somnofy", "sleep_stage_num_emfit"]].to_numpy())
+        y.append(augmented["sleep_stage_num_psg"].to_numpy())
+    return np.array(radars), np.array(mats), np.array(patients), np.array(x), np.array(y)
 
 
 def get_sleepstages(subjectID, inner=True):
@@ -334,6 +338,7 @@ def test_imputing():
     return votes
 
 def overall_balanced_accuracy():
+    """ computes the overall balanced accuracy"""
     warnings.warn("deprecated", DeprecationWarning)
     radar_scores = []
     mat_scores = []
@@ -346,11 +351,11 @@ def overall_balanced_accuracy():
         size = sleep_stages.shape[0]
         divide_ind = int(size*.7)
         # accuracy for radar and mat alone
-        radar_scores.append(balanced_accuracy_score( labels[:divide_ind], sleep_stages["sleep_stage_num_somnofy"][:divide_ind]))
-        mat_scores.append(balanced_accuracy_score( labels[:divide_ind], sleep_stages["sleep_stage_num_emfit"][:divide_ind]))
-        # accuracy for KNN
         x_tr, y_tr = features[:divide_ind], labels[:divide_ind]
         x_te, y_te = features[divide_ind:], labels[divide_ind:]
+        radar_scores.append(balanced_accuracy_score( y_tr , sleep_stages["sleep_stage_num_somnofy"][:divide_ind]))
+        mat_scores.append(balanced_accuracy_score( y_tr , sleep_stages["sleep_stage_num_emfit"][:divide_ind]))
+        # accuracy for KNN
         knn_classifier = KNeighborsClassifier(n_neighbors=7)
         knn_classifier.fit(x_tr, y_tr)
         preds = knn_classifier.predict(x_te)
