@@ -3,10 +3,6 @@ import pandas as pd
 import os
 import numpy as np
 import datetime
-from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, balanced_accuracy_score
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.naive_bayes import CategoricalNB
-import warnings
 
 
 path_ = get_read_path()
