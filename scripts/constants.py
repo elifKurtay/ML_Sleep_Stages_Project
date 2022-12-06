@@ -3,6 +3,7 @@ import os
 PATH = "../data/"
 RAW_PATH = PATH + "raw/"
 PROCESSED_PATH = PATH + "processed/"
+MEAN_SIZE = 857
 
 
 def get_read_path():
