@@ -46,8 +46,9 @@ def impute_data(subjectID, sleep_stages):
         .interpolate(option='time').round().bfill().ffill()
     sleep_stages["sleep_stage_num_emfit"] = sleep_stages["sleep_stage_num_emfit"] \
         .interpolate(option='time').round().bfill().ffill()
-    sleep_stages["sleep_stage_num_psg"] = sleep_stages["sleep_stage_num_psg"] \
-        .interpolate(option='time').round().bfill().ffill()
+    if sleep_stages["sleep_stage_num_psg"].isna().any():
+        sleep_stages["sleep_stage_num_psg"] = sleep_stages["sleep_stage_num_psg"] \
+            .interpolate(option='time').round().bfill().ffill()
     nan_count = sleep_stages.isna().sum()
     if nan_count[2] == sleep_stages.shape[0]:
         print("NO PSG FOR PATIENT " + subjectID)
