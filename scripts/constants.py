@@ -3,6 +3,7 @@ import os
 PATH = "../data/"
 RAW_PATH = PATH + "raw/"
 PROCESSED_PATH = PATH + "processed/"
+PROCESSED_RAW_PATH = PATH + "processed-w-raw/"
 MEAN_SIZE = 857
 
 
@@ -17,13 +18,14 @@ def get_read_path():
         print("Data path not found.")
 
 
-def get_write_path():
+def get_write_path(raw=False):
     dirname = os.path.dirname(__file__)[:-7]
     abs_path = os.path.join(dirname, "data", "processed")
+    raw_path = os.path.join(dirname, "data", "processed-w-raw")
     if os.path.exists(PROCESSED_PATH):
-        return PROCESSED_PATH
+        return PROCESSED_RAW_PATH if raw else PROCESSED_PATH
     elif os.path.exists(abs_path):
-        return abs_path
+        return raw_path if raw else abs_path
     else:
         print("Data path not found.")
 

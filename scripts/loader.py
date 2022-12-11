@@ -18,15 +18,15 @@ def read_patient_data(subjectID):
     return True
 
 
-def write_data():
+def write_data(raw=False):
     """creates all patient sleep stages by sensor
     and writes in data/processed"""
-    path = get_write_path()
+    path = get_write_path(raw=raw)
     for subjectID in PARTICIPANT_IDS:
-        data = get_sleepstages(subjectID)
+        data = get_sleepstages(subjectID, raw=raw)
         if data is None:
             return print(path + "/SMS_" + subjectID + ".csv CANNOT BE GENERATED")
-        imputed, _ = impute_data(subjectID, data)
+        imputed, _ = impute_data(data)
         imputed.to_csv(path + "/SMS_" + subjectID + ".csv", index=True)
     return True
 
@@ -57,10 +57,10 @@ def get_nn_patients():
     return np.array(radars), np.array(mats), np.array(patients), np.array(x), np.array(y)
 
 
-def get_sleepstages(subjectID, inner=True):
-    radar = get_sleepstages_radar(subjectID, path_)
+def get_sleepstages(subjectID, inner=True, raw=False):
+    radar = get_sleepstages_radar(subjectID, path_, raw=raw)
     psg = get_sleep_class_psg(subjectID, path_)
-    mat = get_EMFIT_sleep_stages_file(subjectID, "001505")
+    mat = get_EMFIT_sleep_stages_file(subjectID, raw=raw)
     if radar[0] and psg[0] and mat[0]:
         if inner:
             merged = pd.merge(radar[1], mat[1], left_index=True, right_index=True)
@@ -73,7 +73,7 @@ def get_sleepstages(subjectID, inner=True):
         print("PROBLEM WITH EXTRACTING A DATA")
 
 
-def get_EMFIT_sleep_stages_file(subjectID, emfitID, _path=path_, shift="0s"):
+def get_EMFIT_sleep_stages_file(subjectID, emfitID="001505", _path=path_, raw=False, shift="0s"):
     """Returns a Tuple:
         [0]:boolean --> True, if request was sucessefull
         [1]: DataFrame with LOCAL timestamps as Index and the rest as Columne entries
@@ -84,11 +84,13 @@ def get_EMFIT_sleep_stages_file(subjectID, emfitID, _path=path_, shift="0s"):
     if os.path.exists(path_to_subject_psg):
 
         file_list = os.listdir(path_to_subject_psg)
-        file = f'SMS_{subjectID}-psg-EMFIT_{emfitID}-processed_sleepclasses.csv'
+        sleep_file = f'SMS_{subjectID}-psg-EMFIT_{emfitID}-processed_sleepclasses.csv'
+        raw_file = f'SMS_{subjectID}-psg-EMFIT_{emfitID}-processed.csv'
 
-        if file in file_list:
+        if sleep_file in file_list and raw_file in file_list:
 
-            data_EMFIT = pd.read_csv(f'{path_to_subject_psg}/{file}')
+            data_EMFIT = pd.read_csv(f'{path_to_subject_psg}/{sleep_file}', index_col=0)
+
             data_EMFIT = data_EMFIT.rename(columns={'timestamp': 'timestamp_local'})
             data_EMFIT.index = pd.to_datetime(data_EMFIT.timestamp_local, unit="s")
             data_EMFIT = data_EMFIT.tz_localize("UTC")
@@ -100,20 +102,29 @@ def get_EMFIT_sleep_stages_file(subjectID, emfitID, _path=path_, shift="0s"):
                 3: 1,
                 4: 0
             }
-
             data_EMFIT["sleep_stage_num_emfit"] = data_EMFIT.sleep_class.map(EMFIT_SLEEPCLASS_MAP)
-            data_EMFIT_resampled = data_EMFIT.resample("30s").median(numeric_only=False).ffill()  # should be an int
+            data_EMFIT_resampled = data_EMFIT.resample("30s").median(numeric_only=False).ffill()
+            data_EMFIT_resampled = data_EMFIT_resampled.drop(["sleep_class", "timestamp_local"], axis=1)
 
-            return (True, data_EMFIT_resampled["sleep_stage_num_emfit"])
+            if raw:
+                raw_EMFIT = pd.read_csv(f'{path_to_subject_psg}/{raw_file}', index_col=0)
+                raw_EMFIT = raw_EMFIT.rename(columns={'timestamp': 'timestamp_local'})
+                raw_EMFIT.index = pd.to_datetime(raw_EMFIT.timestamp_local, unit="s")
+                raw_EMFIT = raw_EMFIT.tz_localize("UTC")
+                raw_EMFIT = raw_EMFIT.tz_convert("Europe/Zurich")
+                raw_EMFIT = raw_EMFIT.resample("30s").median(numeric_only=False).ffill()
+                raw_EMFIT.drop(["timestamp_local"], axis=1, inplace=True)
+                emfit = pd.merge(data_EMFIT_resampled, raw_EMFIT, left_index=True, right_index=True)
+                return True, emfit[["sleep_stage_num_emfit", "hr", "rr", "act"]]
+
+            return True, data_EMFIT_resampled["sleep_stage_num_emfit"]
 
         else:
             print(f'ERROR: no sleep_stages file in folder {path_to_subject_psg}')
-            return (False,)
-
+            return False,
     else:
         print(f'No EMFIT_{emfitID} Data for Participant: {subjectID}')
-
-        return (False,)
+        return False,
 
 
 def get_somnofy_data(subjectID, _path, shift="0s"):
@@ -153,7 +164,7 @@ def get_somnofy_data(subjectID, _path, shift="0s"):
         return (False,)
 
 
-def get_sleepstages_radar(subjectID, _path):
+def get_sleepstages_radar(subjectID, _path, raw=False):
     """    Function to get Sleepstages from Somnofy Report. the stages are coded the following way
     (the first column is the value now)
     0 = Awake = 4
@@ -162,11 +173,14 @@ def get_sleepstages_radar(subjectID, _path):
     3 = Deep  = 1
     nan= ...  = 5 <-- No Sleep Stage classified, due to (movement) artefacts"""
     _d = get_somnofy_data(subjectID, _path)
-    if _d[0]:
-        return (True, _d[1][['sleep_stage_num_somnofy']])
+    if _d[0] and not raw:
+        return True, _d[1][['sleep_stage_num_somnofy']]
+    elif _d[0] and raw:
+        return True, _d[1][['sleep_stage_num_somnofy', "distance_mean", "movement_mean", "respiration_rate_mean",
+                            "signal_quality_mean"]]
     else:
         print("Sleep stages could no be extracted")
-        return (False,)
+        return False,
 
 
 def get_sleep_class_psg(subjectID, path_):
