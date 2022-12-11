@@ -8,9 +8,9 @@ import datetime
 path_ = get_read_path()
 
 
-def read_patient_data(subjectID):
+def read_patient_data(subjectID, raw=False):
     """read patient sleep stages from data/processed"""
-    dir_path = get_write_path()
+    dir_path = get_write_path(raw=raw)
     path = dir_path + "/SMS_" + subjectID + ".csv"
     if os.path.exists(path):
         data = pd.read_csv(path, index_col='timestamp_local')
@@ -31,7 +31,7 @@ def write_data(raw=False):
     return True
 
 
-def get_nn_patients():
+def get_nn_patients(raw=False):
     """
     creates all patient input for neural networks in fixed size
     :return: 3 items:
@@ -45,14 +45,14 @@ def get_nn_patients():
     x = []
     y = []
     for subjectId in PARTICIPANT_IDS:
-        sleep_stages = read_patient_data(subjectId)
+        sleep_stages = read_patient_data(subjectId, raw=raw)
         augmented = augment_data(sleep_stages)
         radar = augmented["sleep_stage_num_somnofy"].to_numpy()
         mat = augmented["sleep_stage_num_emfit"].to_numpy()
         radars.append(radar)
         mats.append(mat)
-        patients.append(augmented)
-        x.append(augmented[["sleep_stage_num_somnofy", "sleep_stage_num_emfit"]].to_numpy())
+        patients.append(augmented.to_numpy())
+        x.append(augmented.drop("sleep_stage_num_psg", axis=1).to_numpy())
         y.append(augmented["sleep_stage_num_psg"].to_numpy())
     return np.array(radars), np.array(mats), np.array(patients), np.array(x), np.array(y)
 
