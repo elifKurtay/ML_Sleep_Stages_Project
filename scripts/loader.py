@@ -1,7 +1,6 @@
 from helpers import *
 import pandas as pd
 import os
-import numpy as np
 import datetime
 
 
@@ -52,7 +51,10 @@ def get_nn_patients(raw=False):
         radars.append(radar)
         mats.append(mat)
         patients.append(augmented.to_numpy())
-        x.append(augmented.drop("sleep_stage_num_psg", axis=1).to_numpy())
+        if raw: 
+            x.append(scale_data_bycolumn((augmented.drop("sleep_stage_num_psg", axis=1).to_numpy()),high=1.0, low=0.0))
+        else: x.append(augmented.drop("sleep_stage_num_psg", axis=1).to_numpy())
+        
         y.append(augmented["sleep_stage_num_psg"].to_numpy())
     return np.array(radars), np.array(mats), np.array(patients), np.array(x), np.array(y)
 

@@ -1,5 +1,6 @@
 from constants import *
 import pandas as pd
+import numpy as np
 from dateutil.relativedelta import relativedelta
 
 
@@ -48,3 +49,9 @@ def impute_data(sleep_stages):
     nan_count = sleep_stages.isna().sum()
     return sleep_stages, nan_count
 
+def scale_data_bycolumn(rawpoints, high=1.0, low=0.0):
+    """scale data by column"""
+    mins = np.min(rawpoints, axis=0)
+    maxs = np.max(rawpoints, axis=0)
+    rng = maxs - mins
+    return high - (((high - low) * (maxs - rawpoints)) / rng)
