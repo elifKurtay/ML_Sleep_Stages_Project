@@ -3,7 +3,6 @@ import pandas as pd
 import os
 import datetime
 
-
 path_ = get_read_path()
 
 
@@ -51,10 +50,10 @@ def get_nn_patients(raw=False):
         radars.append(radar)
         mats.append(mat)
         patients.append(augmented.to_numpy())
-        if raw: 
+        if raw:
             x.append(scale_data_bycolumn((augmented.drop("sleep_stage_num_psg", axis=1).to_numpy()),high=1.0, low=0.0))
         else: x.append(augmented.drop("sleep_stage_num_psg", axis=1).to_numpy())
-        
+
         y.append(augmented["sleep_stage_num_psg"].to_numpy())
     return np.array(radars), np.array(mats), np.array(patients), np.array(x), np.array(y)
 
@@ -315,10 +314,12 @@ def get_sleepstages_psg_somnomedics(subjectID, _path):
                                                      "0_Stage_Wake": 0.}, inplace=True)
     try:
         data_somnomedics['timestamp_local'] = pd.to_datetime(data_somnomedics['timestamp_local'],
-                                                             format="%d.%m.%Y %H:%M:%S,%f").dt.tz_localize('Europe/Paris')
+                                                             format="%d.%m.%Y %H:%M:%S,%f").dt.tz_localize(
+            'Europe/Paris')
     except ValueError:
         print(f'Date format wrong for Participant: {subjectID}')
-        data_somnomedics['timestamp_local'] = pd.to_datetime(data_somnomedics['timestamp_local']).dt.tz_localize('Europe/Paris')
+        data_somnomedics['timestamp_local'] = pd.to_datetime(data_somnomedics['timestamp_local']).dt.tz_localize(
+            'Europe/Paris')
 
     data_somnomedics['timestamp_local'] = data_somnomedics['timestamp_local'] + pd.Timedelta('30s')
 
@@ -348,5 +349,3 @@ def test_imputing():
         except ValueError:
             print("all nan in participant " + subjectID)
     return votes
-
-
