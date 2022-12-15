@@ -5,6 +5,8 @@ RAW_PATH = PATH + "raw/"
 PROCESSED_PATH = PATH + "processed/"
 PROCESSED_RAW_PATH = PATH + "processed-w-raw/"
 MEAN_SIZE = 857
+BIG_MEAN = 1087
+SMALL_MEAN = 713
 
 
 def get_read_path():

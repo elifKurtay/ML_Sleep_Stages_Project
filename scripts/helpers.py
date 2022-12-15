@@ -4,14 +4,24 @@ import numpy as np
 from dateutil.relativedelta import relativedelta
 
 
-def augment_data(sleep_stages):
+def augment_data(sleep_stages, divided=False):
     """
     Augment sleep stages data to reach a fixed length
+    :param divided:
     :param sleep_stages: processed sleep stages data of a single patient with 2 sensor and 1 psg
     :return: sleep_stages data expended/decreased from the start and end to be on the MEAN_SIZE
     """
-    augment = MEAN_SIZE > sleep_stages.shape[0]
-    ind_diff = abs(MEAN_SIZE - sleep_stages.shape[0]) // 2
+    if divided:
+        augment = MEAN_SIZE > sleep_stages.shape[0]
+        mean = MEAN_SIZE
+    elif MEAN_SIZE > sleep_stages.shape[0]:
+        augment = SMALL_MEAN > sleep_stages.shape[0]
+        mean = SMALL_MEAN
+    else:
+        augment = BIG_MEAN > sleep_stages.shape[0]
+        mean = BIG_MEAN
+
+    ind_diff = abs(mean - sleep_stages.shape[0]) // 2
     interval = relativedelta(seconds=30)
     if augment:
         start_date = pd.to_datetime(sleep_stages.index[0]) - interval * ind_diff

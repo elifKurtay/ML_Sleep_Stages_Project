@@ -1,3 +1,5 @@
+import numpy as np
+
 from helpers import *
 import pandas as pd
 import os
@@ -13,7 +15,7 @@ def read_patient_data(subjectID, raw=False):
     if os.path.exists(path):
         data = pd.read_csv(path, index_col='timestamp_local')
         return data
-    return True
+    return None
 
 
 def write_data(raw=False):
@@ -29,7 +31,7 @@ def write_data(raw=False):
     return True
 
 
-def get_nn_patients(raw=False):
+def get_nn_patients(raw=False, divided=False):
     """
     creates all patient input for neural networks in fixed size
     :return: 3 items:
@@ -40,7 +42,8 @@ def get_nn_patients(raw=False):
     patients = []
     radars = []
     mats = []
-    x = []
+    x_small = []
+    x_big = []
     y = []
     for subjectId in PARTICIPANT_IDS:
         sleep_stages = read_patient_data(subjectId, raw=raw)
@@ -50,12 +53,19 @@ def get_nn_patients(raw=False):
         radars.append(radar)
         mats.append(mat)
         patients.append(augmented.to_numpy())
-        if raw:
-            x.append(scale_data_bycolumn((augmented.drop("sleep_stage_num_psg", axis=1).to_numpy()),high=1.0, low=0.0))
-        else: x.append(augmented.drop("sleep_stage_num_psg", axis=1).to_numpy())
+
+        if divided and raw and augmented.shape[1] > MEAN_SIZE:
+            x_big.append(
+                scale_data_bycolumn((augmented.drop("sleep_stage_num_psg", axis=1).to_numpy()), high=1.0, low=0.0))
+        elif divided and augmented.shape[1] > MEAN_SIZE:
+            x_big.append(augmented.drop("sleep_stage_num_psg", axis=1).to_numpy())
+        elif raw:
+            x_small.append(scale_data_bycolumn((augmented.drop("sleep_stage_num_psg", axis=1).to_numpy()),high=1.0, low=0.0))
+        else:
+            x_small.append(augmented.drop("sleep_stage_num_psg", axis=1).to_numpy())
 
         y.append(augmented["sleep_stage_num_psg"].to_numpy())
-    return np.array(radars), np.array(mats), np.array(patients), np.array(x), np.array(y)
+    return np.array(radars), np.array(mats), np.array(patients), np.array(x_small), np.array(y), np.array(x_big)
 
 
 def get_sleepstages(subjectID, inner=True, raw=False):
