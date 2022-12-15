@@ -39,33 +39,30 @@ def get_nn_patients(raw=False, divided=False):
         - mats: numpy of all patients emfit mat values in size MEAN_SIZE
         - patients: numpy of all patients augmented values in size MEAN_SIZE
     """
-    patients = []
-    radars = []
-    mats = []
     x_small = []
     x_big = []
-    y = []
+    y_small = []
+    y_big = []
     for subjectId in PARTICIPANT_IDS:
         sleep_stages = read_patient_data(subjectId, raw=raw)
-        augmented = augment_data(sleep_stages)
-        radar = augmented["sleep_stage_num_somnofy"].to_numpy()
-        mat = augmented["sleep_stage_num_emfit"].to_numpy()
-        radars.append(radar)
-        mats.append(mat)
-        patients.append(augmented.to_numpy())
+        augmented = augment_data(sleep_stages, divided=divided)
 
-        if divided and raw and augmented.shape[1] > MEAN_SIZE:
+        if divided and raw and augmented.shape[0] > MEAN_SIZE:
             x_big.append(
                 scale_data_bycolumn((augmented.drop("sleep_stage_num_psg", axis=1).to_numpy()), high=1.0, low=0.0))
-        elif divided and augmented.shape[1] > MEAN_SIZE:
+        elif divided and augmented.shape[0] > MEAN_SIZE:
             x_big.append(augmented.drop("sleep_stage_num_psg", axis=1).to_numpy())
         elif raw:
-            x_small.append(scale_data_bycolumn((augmented.drop("sleep_stage_num_psg", axis=1).to_numpy()),high=1.0, low=0.0))
+            standartised = scale_data_bycolumn((augmented.drop("sleep_stage_num_psg", axis=1).to_numpy()), high=1.0, low=0.0)
+            x_small.append(standartised)
         else:
             x_small.append(augmented.drop("sleep_stage_num_psg", axis=1).to_numpy())
 
-        y.append(augmented["sleep_stage_num_psg"].to_numpy())
-    return np.array(radars), np.array(mats), np.array(patients), np.array(x_small), np.array(y), np.array(x_big)
+        if divided and augmented.shape[0] > MEAN_SIZE:
+            y_big.append(augmented["sleep_stage_num_psg"].to_numpy())
+        else:
+            y_small.append(augmented["sleep_stage_num_psg"].to_numpy())
+    return np.array(x_small), np.array(y_small), np.array(x_big), np.array(y_big)
 
 
 def get_sleepstages(subjectID, inner=True, raw=False):

@@ -1,3 +1,5 @@
+from sklearn.preprocessing import MinMaxScaler
+
 from constants import *
 import pandas as pd
 import numpy as np
@@ -11,7 +13,7 @@ def augment_data(sleep_stages, divided=False):
     :param sleep_stages: processed sleep stages data of a single patient with 2 sensor and 1 psg
     :return: sleep_stages data expended/decreased from the start and end to be on the MEAN_SIZE
     """
-    if divided:
+    if not divided:
         augment = MEAN_SIZE > sleep_stages.shape[0]
         mean = MEAN_SIZE
     elif MEAN_SIZE > sleep_stages.shape[0]:
@@ -59,9 +61,8 @@ def impute_data(sleep_stages):
     nan_count = sleep_stages.isna().sum()
     return sleep_stages, nan_count
 
-def scale_data_bycolumn(rawpoints, high=1.0, low=0.0):
-    """scale data by column"""
-    mins = np.min(rawpoints, axis=0)
-    maxs = np.max(rawpoints, axis=0)
-    rng = maxs - mins
-    return high - (((high - low) * (maxs - rawpoints)) / rng)
+
+def scale_data_bycolumn( rawpoints, high=1.0, low=0.0):
+    scaler = MinMaxScaler()
+    # transform data
+    return scaler.fit_transform(rawpoints)
