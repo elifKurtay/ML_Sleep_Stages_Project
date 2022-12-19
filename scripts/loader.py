@@ -1,37 +1,37 @@
+import numpy as np
+
 from helpers import *
 import pandas as pd
 import os
-import numpy as np
 import datetime
-
 
 path_ = get_read_path()
 
 
-def read_patient_data(subjectID):
+def read_patient_data(subjectID, raw=False):
     """read patient sleep stages from data/processed"""
-    dir_path = get_write_path()
+    dir_path = get_write_path(raw=raw)
     path = dir_path + "/SMS_" + subjectID + ".csv"
     if os.path.exists(path):
         data = pd.read_csv(path, index_col='timestamp_local')
         return data
-    return True
+    return None
 
 
-def write_data():
+def write_data(raw=False):
     """creates all patient sleep stages by sensor
     and writes in data/processed"""
-    path = get_write_path()
+    path = get_write_path(raw=raw)
     for subjectID in PARTICIPANT_IDS:
-        data = get_sleepstages(subjectID)
+        data = get_sleepstages(subjectID, raw=raw)
         if data is None:
             return print(path + "/SMS_" + subjectID + ".csv CANNOT BE GENERATED")
-        imputed, _ = impute_data(subjectID, data)
+        imputed, _ = impute_data(data)
         imputed.to_csv(path + "/SMS_" + subjectID + ".csv", index=True)
     return True
 
 
-def get_nn_patients():
+def get_nn_patients(raw=False, divided=False):
     """
     creates all patient input for neural networks in fixed size
     :return: 3 items:
@@ -39,28 +39,36 @@ def get_nn_patients():
         - mats: numpy of all patients emfit mat values in size MEAN_SIZE
         - patients: numpy of all patients augmented values in size MEAN_SIZE
     """
-    patients = []
-    radars = []
-    mats = []
-    x = []
-    y = []
+    x_small = []
+    x_big = []
+    y_small = []
+    y_big = []
     for subjectId in PARTICIPANT_IDS:
-        sleep_stages = read_patient_data(subjectId)
-        augmented = augment_data(sleep_stages)
-        radar = augmented["sleep_stage_num_somnofy"].to_numpy()
-        mat = augmented["sleep_stage_num_emfit"].to_numpy()
-        radars.append(radar)
-        mats.append(mat)
-        patients.append(augmented)
-        x.append(augmented[["sleep_stage_num_somnofy", "sleep_stage_num_emfit"]].to_numpy())
-        y.append(augmented["sleep_stage_num_psg"].to_numpy())
-    return np.array(radars), np.array(mats), np.array(patients), np.array(x), np.array(y)
+        sleep_stages = read_patient_data(subjectId, raw=raw)
+        augmented = augment_data(sleep_stages, divided=divided)
+
+        if divided and raw and augmented.shape[0] > MEAN_SIZE:
+            x_big.append(
+                scale_data_bycolumn((augmented.drop("sleep_stage_num_psg", axis=1).to_numpy()), high=1.0, low=0.0))
+        elif divided and augmented.shape[0] > MEAN_SIZE:
+            x_big.append(augmented.drop("sleep_stage_num_psg", axis=1).to_numpy())
+        elif raw:
+            standartised = scale_data_bycolumn((augmented.drop("sleep_stage_num_psg", axis=1).to_numpy()), high=1.0, low=0.0)
+            x_small.append(standartised)
+        else:
+            x_small.append(augmented.drop("sleep_stage_num_psg", axis=1).to_numpy())
+
+        if divided and augmented.shape[0] > MEAN_SIZE:
+            y_big.append(augmented["sleep_stage_num_psg"].to_numpy())
+        else:
+            y_small.append(augmented["sleep_stage_num_psg"].to_numpy())
+    return np.array(x_small), np.array(y_small), np.array(x_big), np.array(y_big)
 
 
-def get_sleepstages(subjectID, inner=True):
-    radar = get_sleepstages_radar(subjectID, path_)
+def get_sleepstages(subjectID, inner=True, raw=False):
+    radar = get_sleepstages_radar(subjectID, path_, raw=raw)
     psg = get_sleep_class_psg(subjectID, path_)
-    mat = get_EMFIT_sleep_stages_file(subjectID, "001505")
+    mat = get_EMFIT_sleep_stages_file(subjectID, raw=raw)
     if radar[0] and psg[0] and mat[0]:
         if inner:
             merged = pd.merge(radar[1], mat[1], left_index=True, right_index=True)
@@ -73,7 +81,7 @@ def get_sleepstages(subjectID, inner=True):
         print("PROBLEM WITH EXTRACTING A DATA")
 
 
-def get_EMFIT_sleep_stages_file(subjectID, emfitID, _path=path_, shift="0s"):
+def get_EMFIT_sleep_stages_file(subjectID, emfitID="001505", _path=path_, raw=False, shift="0s"):
     """Returns a Tuple:
         [0]:boolean --> True, if request was sucessefull
         [1]: DataFrame with LOCAL timestamps as Index and the rest as Columne entries
@@ -84,11 +92,13 @@ def get_EMFIT_sleep_stages_file(subjectID, emfitID, _path=path_, shift="0s"):
     if os.path.exists(path_to_subject_psg):
 
         file_list = os.listdir(path_to_subject_psg)
-        file = f'SMS_{subjectID}-psg-EMFIT_{emfitID}-processed_sleepclasses.csv'
+        sleep_file = f'SMS_{subjectID}-psg-EMFIT_{emfitID}-processed_sleepclasses.csv'
+        raw_file = f'SMS_{subjectID}-psg-EMFIT_{emfitID}-processed.csv'
 
-        if file in file_list:
+        if sleep_file in file_list and raw_file in file_list:
 
-            data_EMFIT = pd.read_csv(f'{path_to_subject_psg}/{file}')
+            data_EMFIT = pd.read_csv(f'{path_to_subject_psg}/{sleep_file}', index_col=0)
+
             data_EMFIT = data_EMFIT.rename(columns={'timestamp': 'timestamp_local'})
             data_EMFIT.index = pd.to_datetime(data_EMFIT.timestamp_local, unit="s")
             data_EMFIT = data_EMFIT.tz_localize("UTC")
@@ -100,20 +110,29 @@ def get_EMFIT_sleep_stages_file(subjectID, emfitID, _path=path_, shift="0s"):
                 3: 1,
                 4: 0
             }
-
             data_EMFIT["sleep_stage_num_emfit"] = data_EMFIT.sleep_class.map(EMFIT_SLEEPCLASS_MAP)
-            data_EMFIT_resampled = data_EMFIT.resample("30s").median(numeric_only=False).ffill()  # should be an int
+            data_EMFIT_resampled = data_EMFIT.resample("30s").median(numeric_only=False).ffill()
+            data_EMFIT_resampled = data_EMFIT_resampled.drop(["sleep_class", "timestamp_local"], axis=1)
 
-            return (True, data_EMFIT_resampled["sleep_stage_num_emfit"])
+            if raw:
+                raw_EMFIT = pd.read_csv(f'{path_to_subject_psg}/{raw_file}', index_col=0)
+                raw_EMFIT = raw_EMFIT.rename(columns={'timestamp': 'timestamp_local'})
+                raw_EMFIT.index = pd.to_datetime(raw_EMFIT.timestamp_local, unit="s")
+                raw_EMFIT = raw_EMFIT.tz_localize("UTC")
+                raw_EMFIT = raw_EMFIT.tz_convert("Europe/Zurich")
+                raw_EMFIT = raw_EMFIT.resample("30s").median(numeric_only=False).ffill()
+                raw_EMFIT.drop(["timestamp_local"], axis=1, inplace=True)
+                emfit = pd.merge(data_EMFIT_resampled, raw_EMFIT, left_index=True, right_index=True)
+                return True, emfit[["sleep_stage_num_emfit", "hr", "rr", "act"]]
+
+            return True, data_EMFIT_resampled["sleep_stage_num_emfit"]
 
         else:
             print(f'ERROR: no sleep_stages file in folder {path_to_subject_psg}')
-            return (False,)
-
+            return False,
     else:
         print(f'No EMFIT_{emfitID} Data for Participant: {subjectID}')
-
-        return (False,)
+        return False,
 
 
 def get_somnofy_data(subjectID, _path, shift="0s"):
@@ -153,7 +172,7 @@ def get_somnofy_data(subjectID, _path, shift="0s"):
         return (False,)
 
 
-def get_sleepstages_radar(subjectID, _path):
+def get_sleepstages_radar(subjectID, _path, raw=False):
     """    Function to get Sleepstages from Somnofy Report. the stages are coded the following way
     (the first column is the value now)
     0 = Awake = 4
@@ -162,11 +181,14 @@ def get_sleepstages_radar(subjectID, _path):
     3 = Deep  = 1
     nan= ...  = 5 <-- No Sleep Stage classified, due to (movement) artefacts"""
     _d = get_somnofy_data(subjectID, _path)
-    if _d[0]:
-        return (True, _d[1][['sleep_stage_num_somnofy']])
+    if _d[0] and not raw:
+        return True, _d[1][['sleep_stage_num_somnofy']]
+    elif _d[0] and raw:
+        return True, _d[1][['sleep_stage_num_somnofy', "distance_mean", "movement_mean", "respiration_rate_mean",
+                            "signal_quality_mean"]]
     else:
         print("Sleep stages could no be extracted")
-        return (False,)
+        return False,
 
 
 def get_sleep_class_psg(subjectID, path_):
@@ -299,10 +321,12 @@ def get_sleepstages_psg_somnomedics(subjectID, _path):
                                                      "0_Stage_Wake": 0.}, inplace=True)
     try:
         data_somnomedics['timestamp_local'] = pd.to_datetime(data_somnomedics['timestamp_local'],
-                                                             format="%d.%m.%Y %H:%M:%S,%f").dt.tz_localize('Europe/Paris')
+                                                             format="%d.%m.%Y %H:%M:%S,%f").dt.tz_localize(
+            'Europe/Paris')
     except ValueError:
         print(f'Date format wrong for Participant: {subjectID}')
-        data_somnomedics['timestamp_local'] = pd.to_datetime(data_somnomedics['timestamp_local']).dt.tz_localize('Europe/Paris')
+        data_somnomedics['timestamp_local'] = pd.to_datetime(data_somnomedics['timestamp_local']).dt.tz_localize(
+            'Europe/Paris')
 
     data_somnomedics['timestamp_local'] = data_somnomedics['timestamp_local'] + pd.Timedelta('30s')
 
@@ -332,5 +356,3 @@ def test_imputing():
         except ValueError:
             print("all nan in participant " + subjectID)
     return votes
-
-

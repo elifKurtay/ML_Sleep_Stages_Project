@@ -1,16 +1,29 @@
+from sklearn.preprocessing import MinMaxScaler
+
 from constants import *
 import pandas as pd
+import numpy as np
 from dateutil.relativedelta import relativedelta
 
 
-def augment_data(sleep_stages):
+def augment_data(sleep_stages, divided=False):
     """
     Augment sleep stages data to reach a fixed length
+    :param divided:
     :param sleep_stages: processed sleep stages data of a single patient with 2 sensor and 1 psg
     :return: sleep_stages data expended/decreased from the start and end to be on the MEAN_SIZE
     """
-    augment = MEAN_SIZE > sleep_stages.shape[0]
-    ind_diff = abs(MEAN_SIZE - sleep_stages.shape[0]) // 2
+    if not divided:
+        augment = MEAN_SIZE > sleep_stages.shape[0]
+        mean = MEAN_SIZE
+    elif MEAN_SIZE > sleep_stages.shape[0]:
+        augment = SMALL_MEAN > sleep_stages.shape[0]
+        mean = SMALL_MEAN
+    else:
+        augment = BIG_MEAN > sleep_stages.shape[0]
+        mean = BIG_MEAN
+
+    ind_diff = abs(mean - sleep_stages.shape[0]) // 2
     interval = relativedelta(seconds=30)
     if augment:
         start_date = pd.to_datetime(sleep_stages.index[0]) - interval * ind_diff
@@ -33,7 +46,7 @@ def augment_data(sleep_stages):
     return merged
 
 
-def impute_data(subjectID, sleep_stages):
+def impute_data(sleep_stages):
     """ impute all columns of patient data
     1. impute using interpolate for middle values
     2. for the beginning and ending values perform both bfill and ffill
@@ -42,29 +55,14 @@ def impute_data(subjectID, sleep_stages):
     array[0] = new dataframe with imputed values
     array[1] = current nan values of each column in order
     """
-    sleep_stages["sleep_stage_num_somnofy"] = sleep_stages["sleep_stage_num_somnofy"] \
-        .interpolate(option='time').round().bfill().ffill()
-    sleep_stages["sleep_stage_num_emfit"] = sleep_stages["sleep_stage_num_emfit"] \
-        .interpolate(option='time').round().bfill().ffill()
-    sleep_stages["sleep_stage_num_psg"] = sleep_stages["sleep_stage_num_psg"] \
-        .interpolate(option='time').round().bfill().ffill()
+    for column in sleep_stages.columns:
+        if sleep_stages[column].isna().any():
+            sleep_stages[column] = sleep_stages[column].interpolate(option='time').round().bfill().ffill()
     nan_count = sleep_stages.isna().sum()
-    if nan_count[2] == sleep_stages.shape[0]:
-        print("NO PSG FOR PATIENT " + subjectID)
-    return sleep_stages, (nan_count[0], nan_count[1], nan_count[2])
+    return sleep_stages, nan_count
 
 
-def impute_all():
-    """ impute all columns of all patient data
-    1. impute using interpolate for middle values
-    2. for the beginning and ending values perform both bfill and ffill
-
-    return type: array of size 2
-    array[0] = new dataframe with imputed values
-    array[1] = current nan values of each column in order
-    """
-    dfs = []
-    for subjectID in PARTICIPANT_IDS:
-        sleep_stages, nan_count = impute_data(subjectID)
-        dfs.append([sleep_stages, (nan_count[0], nan_count[1], nan_count[2])])
-    return dfs
+def scale_data_bycolumn( rawpoints, high=1.0, low=0.0):
+    scaler = MinMaxScaler()
+    # transform data
+    return scaler.fit_transform(rawpoints)
