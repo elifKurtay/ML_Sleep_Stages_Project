@@ -4,6 +4,10 @@ from sklearn.metrics import balanced_accuracy_score
 from helpers import *
 from plot import *
 import matplotlib.pyplot as plt
+from constants import *
+from helpers import *
+from loader import *
+from plot import *
 
 #Method 0-1: This is not a ML method
     #applied per individual
@@ -75,3 +79,26 @@ def method_x(sleep_stages, max_iters=150, gamma=0.005):
 
 #shift everything by 1
 
+
+""" def accur_app(test_list,w0=False):
+    max_len=0
+    for i in range(len(test_list)):
+        subjectID = test_list[i]
+        sleep_stages = read_patient_data(subjectID)
+        len=len(sleep_stages["sleep_stage_num_psg"])
+        if max_len<len:
+            max_len=len
+
+    ss_emfit=np.zeros
+    ss_somnofy=sleep_stages["sleep_stage_num_somnofy"].to_numpy()
+    ss_psg=sleep_stages["sleep_stage_num_psg"].to_numpy()
+    subjectID = test_list[i]
+    sleep_stages = read_patient_data(subjectID)
+    ss_emfit=sleep_stages["sleep_stage_num_emfit"].to_numpy()
+    ss_somnofy=sleep_stages["sleep_stage_num_somnofy"].to_numpy()
+    ss_psg=sleep_stages["sleep_stage_num_psg"].to_numpy()
+    if w0 is True:
+        w=[0,0,0]
+    else:
+        w=[0,0] """
+        
