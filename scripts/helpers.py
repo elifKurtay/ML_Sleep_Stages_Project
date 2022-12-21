@@ -59,39 +59,13 @@ def scale_data_bycolumn( rawpoints, high=1.0, low=0.0):
     return scaler.fit_transform(rawpoints)
 
 #------------------------ RESULT ------------------------------------------------------------
-def overall_balanced_accuracy():
+def overall_balanced_accuracy(x, y):
     """ computes the overall balanced accuracy"""
     warnings.warn("deprecated", DeprecationWarning)
-    radar_scores = []
-    mat_scores = []
-    knn_scores = []
-    nb_scores = []
-    for subjectID in PARTICIPANT_IDS:
-        sleep_stages = read_patient_data(subjectID)
-        labels = sleep_stages["sleep_stage_num_psg"]
-        features = sleep_stages.drop(columns="sleep_stage_num_psg")
-        size = sleep_stages.shape[0]
-        divide_ind = int(size * .7)
-        # accuracy for radar and mat alone
-        x_tr, y_tr = features[:divide_ind], labels[:divide_ind]
-        x_te, y_te = features[divide_ind:], labels[divide_ind:]
-        radar_scores.append(balanced_accuracy_score(y_tr, sleep_stages["sleep_stage_num_somnofy"][:divide_ind]))
-        mat_scores.append(balanced_accuracy_score(y_tr, sleep_stages["sleep_stage_num_emfit"][:divide_ind]))
-        # accuracy for KNN
-        knn_classifier = KNeighborsClassifier(n_neighbors=7)
-        knn_classifier.fit(x_tr, y_tr)
-        preds = knn_classifier.predict(x_te)
-        knn_scores.append(balanced_accuracy_score(y_te, preds))
-        # accuracy for NB
-        cnb_classifier = CategoricalNB()
-        cnb_classifier.fit(x_tr, y_tr)
-        preds = cnb_classifier.predict(x_te)
-        nb_scores.append(balanced_accuracy_score(y_te, preds))
-
-    print("Radar:   Acc = ", np.average(radar_scores), "St. Dv. = ", np.std(radar_scores))
-    print("Mat:   Acc = ", np.average(mat_scores), "St. Dv. = ", np.std(mat_scores))
-    print("kNN:   Acc = ", np.average(knn_scores), "St. Dv. = ", np.std(knn_scores))
-    print("NB:   Acc = ", np.average(nb_scores), "St. Dv. = ", np.std(nb_scores))
+    radar_score = balanced_accuracy_score(y, x[:, 0])
+    mat_score = balanced_accuracy_score(y, x[:, 1])
+    print("Radar:   Acc = ", radar_score)
+    print("Mat:   Acc = ", mat_score)
 
 
 #------------------------ PLOTS ------------------------------------------------------------
@@ -118,7 +92,7 @@ def plot_conf_matrix(preds, labels, normalize = False):
         conf_matrix = confusion_matrix(labels, preds, normalize = 'all')
     else:
         conf_matrix = confusion_matrix(labels, preds)
-    print(conf_matrix)
+    #print(conf_matrix)
     df_cm = pd.DataFrame(conf_matrix, range(4), range(4))
     ax = sn.heatmap(df_cm, annot=True, annot_kws={"size": 14}, fmt=".3g")
     ax.set(xlabel='Actual', ylabel='Prediction')
