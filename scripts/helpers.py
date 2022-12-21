@@ -1,7 +1,5 @@
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import balanced_accuracy_score
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.naive_bayes import CategoricalNB
 import warnings
 from constants import *
 import pandas as pd
