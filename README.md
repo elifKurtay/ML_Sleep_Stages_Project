@@ -31,6 +31,8 @@ The traditional method of sleep stage classification is performed by sleep exper
   - File containing implementation and results of all ML models used on the processed data set which as Grid Search, Gradient Descent, KNN, Naive Bayes, and Decision Tree.
 - CNN_1D.ipynb
   - File where the training set is used to find the best CNN model. 
+- Experimentation.ipynb
+  - File containing implementation and results of Decision Tree with raw features included and a KMeans implementation to try unsupervised learning.
 - loader.py
   - File where functions relating to loading the patient data to tranfer it to the format given in the "data" folder in the repository.
 - constants.py
