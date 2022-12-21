@@ -1,6 +1,5 @@
-import numpy as np
-
 from helpers import *
+
 import pandas as pd
 import os
 import datetime
@@ -333,6 +332,22 @@ def get_sleepstages_psg_somnomedics(subjectID, _path):
     data_somnomedics.set_index('timestamp_local', inplace=True)
     del data_somnomedics['sleep_stage']
     return (True, data_somnomedics)
+
+
+def impute_data(sleep_stages):
+    """ impute all columns of patient data
+    1. impute using interpolate for middle values
+    2. for the beginning and ending values perform both bfill and ffill
+
+    return type: array of size 2
+    array[0] = new dataframe with imputed values
+    array[1] = current nan values of each column in order
+    """
+    for column in sleep_stages.columns:
+        if sleep_stages[column].isna().any():
+            sleep_stages[column] = sleep_stages[column].interpolate(option='time').round().bfill().ffill()
+    nan_count = sleep_stages.isna().sum()
+    return sleep_stages, nan_count
 
 
 def test_imputing():
