@@ -90,48 +90,30 @@ def plot_conf_matrix(preds, labels, normalize = False):
         conf_matrix = confusion_matrix(labels, preds, normalize = 'all')
     else:
         conf_matrix = confusion_matrix(labels, preds)
-    #print(conf_matrix)
+    acc_per_class = conf_matrix.diagonal() / conf_matrix.sum(axis=1)
+    print("Accuracy per class:", acc_per_class)
     df_cm = pd.DataFrame(conf_matrix, range(4), range(4))
     ax = sn.heatmap(df_cm, annot=True, annot_kws={"size": 14}, fmt=".3g")
     ax.set(xlabel='Actual', ylabel='Prediction')
     plt.show()
 
 #------------------------ PREDICTION ------------------------------------------------------------
-def value_rounded(value,Shifted):
-    if Shifted:
-        if value <1.5:
-            return 0
-        elif 1.5 <= value <2.5:
-            return 1
-        elif 2.5<=value<3.5:
-            return 2
-        elif 3.5<=value:
-            return 3
-    else:
-        if value <0.5:
-            return 0
-        elif 0.5 <= value <1.5:
-            return 1
-        elif 1.5<=value<2.5:
-            return 2
-        elif 2.5<=value:
-            return 3
-
-def get_predictions(weights,ss_emfit,ss_somnofy,Shifted=False):
-    new_SS=np.ones(len(ss_emfit))
+def get_predictions(weights,emfits,somnofys):
+    new_ss=np.ones((emfits.shape[0],emfits.shape[1]))
     if len(weights) == 2:
-        for i in range(len(ss_emfit)):
-            new_SS[i]=value_rounded((ss_emfit[i]*weights[0]+ss_somnofy[i]*weights[1]),Shifted)
+        for i in range(new_ss.shape[1]):
+            new_ss[:,i]=(emfits[:,i]*weights[0]+somnofys[:,i]*weights[1])
     elif len(weights) == 3:
-        for i in range(len(ss_emfit)):
-                new_SS[i]=value_rounded(weights[0]+ss_emfit[i]*weights[1]+ss_somnofy[i]*weights[2],Shifted)
-    return new_SS
+        for i in range(new_ss.shape[1]):
+                new_ss[:,i]=(emfits[:,i]*weights[0]+somnofys[:,i]*weights[1])+weights[0]
+    new_ss=np.round(new_ss)
+    return new_ss
 
 
 def mse_gd(ss_emfit,ss_somnofy,ss_psg, max_iters=150, gamma=0.005,w0=False):
     y,tx=build_y_tx(ss_emfit,ss_somnofy,ss_psg,w0)
     loss=0
-    w = np.zeros((tx.shape[1],1), dtype=float) #initial_w
+    w = np.zeros((tx.shape[1],1), dtype=float)  # initial_w
     for n_iter in range(max_iters):
         gradient = comp_grad(tx,comp_error(y,tx,w))
         loss = mse_loss(y, tx, w)
