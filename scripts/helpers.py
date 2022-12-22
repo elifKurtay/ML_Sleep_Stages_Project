@@ -56,15 +56,6 @@ def scale_data_bycolumn( rawpoints, high=1.0, low=0.0):
     # transform data
     return scaler.fit_transform(rawpoints)
 
-#------------------------ RESULT ------------------------------------------------------------
-def overall_balanced_accuracy(x, y):
-    """ computes the overall balanced accuracy"""
-    warnings.warn("deprecated", DeprecationWarning)
-    radar_score = balanced_accuracy_score(y, x[:, 0])
-    mat_score = balanced_accuracy_score(y, x[:, 1])
-    print("Radar:   Acc = ", radar_score)
-    print("Mat:   Acc = ", mat_score)
-
 
 #------------------------ PLOTS ------------------------------------------------------------
 def plot_missing_sleepstages(df):
