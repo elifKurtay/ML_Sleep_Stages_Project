@@ -50,7 +50,7 @@ Make sure your environment satisfies the following requirements:
 - Python 3.7+
 - NumPy module 
 - matplotlib
-- Python's scikit-learn, tensorflow, tsfresh, tslearn
+- Python's scikit-learn, tensorflow, dtaidistance
 
 ### Run the code
 From the root folder of the project
