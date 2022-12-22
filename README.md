@@ -40,7 +40,7 @@ The traditional method of sleep stage classification is performed by sleep exper
 - helpers.py
   - File that contains various helper functions for the project generally including loss, gradient, and accuracy computations.
 - run.py
-  - Main script - loading the best trained CNN model and using the test set to make predictions
+  - Main script - loading the best trained ML model (Naive Bayes) and using the test set to make predictions
 
 ## How to reproduce our results
 The initial raw data received from the ETH Zurich lab is not shared in this repository as it is confidential. However, the processed versions of the data is included which is enough to re-run all models.
