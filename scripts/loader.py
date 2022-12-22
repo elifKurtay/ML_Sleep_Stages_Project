@@ -110,7 +110,7 @@ def get_EMFIT_sleep_stages_file(subjectID, emfitID="001505", _path=path_, raw=Fa
                 4: 0
             }
             data_EMFIT["sleep_stage_num_emfit"] = data_EMFIT.sleep_class.map(EMFIT_SLEEPCLASS_MAP)
-            data_EMFIT_resampled = data_EMFIT.resample("30s").median(numeric_only=False).ffill()
+            data_EMFIT_resampled = data_EMFIT.resample("30s").median().ffill()
             data_EMFIT_resampled = data_EMFIT_resampled.drop(["sleep_class", "timestamp_local"], axis=1)
 
             if raw:
@@ -119,7 +119,7 @@ def get_EMFIT_sleep_stages_file(subjectID, emfitID="001505", _path=path_, raw=Fa
                 raw_EMFIT.index = pd.to_datetime(raw_EMFIT.timestamp_local, unit="s")
                 raw_EMFIT = raw_EMFIT.tz_localize("UTC")
                 raw_EMFIT = raw_EMFIT.tz_convert("Europe/Zurich")
-                raw_EMFIT = raw_EMFIT.resample("30s").median(numeric_only=False).ffill()
+                raw_EMFIT = raw_EMFIT.resample("30s").median().ffill()
                 raw_EMFIT.drop(["timestamp_local"], axis=1, inplace=True)
                 emfit = pd.merge(data_EMFIT_resampled, raw_EMFIT, left_index=True, right_index=True)
                 return True, emfit[["sleep_stage_num_emfit", "hr", "rr", "act"]]
@@ -162,7 +162,7 @@ def get_somnofy_data(subjectID, _path, shift="0s"):
             data_somnofy['timestamp_local'] = data_somnofy['timestamp_local'] + pd.Timedelta('30s')
 
             data_somnofy.set_index('timestamp_local', inplace=True)
-            data_somnofy_resampled = data_somnofy.resample('30s').median(numeric_only=False).drop("Unnamed: 0", axis=1)
+            data_somnofy_resampled = data_somnofy.resample('30s').median().drop("Unnamed: 0", axis=1)
             data_somnofy_resampled["sleep_stage_num_somnofy"] = data_somnofy_resampled["sleep_stage_num_somnofy"].round(
                 decimals=0)
         return (True, data_somnofy_resampled)
