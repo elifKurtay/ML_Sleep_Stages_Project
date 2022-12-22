@@ -18,10 +18,15 @@ if __name__ == '__main__':
 
     trainy = to_categorical(trainy)
     testy = to_categorical(y_te)
-    model = keras.models.load_model('path/to/location')
+    dirname = os.path.dirname(__file__)
+    path = os.path.join(dirname, "best_model_0.6801244616508484")
+    model = keras.models.load_model(path)
 
+    # predict results
+    preds = model.predict(testX)
+    classes = np.argmax(preds, axis=1)
 
-    #print(classification_report(true, preds))
-    #print("Balanced accuracy:", balanced_accuracy_score(true, preds))
-    #print("Accuracy:", accuracy_score(true, preds))
-    #plot_conf_matrix(true, y_te, normalize=True)
+    print(classification_report(y_te, classes))
+    print("Balanced accuracy:", balanced_accuracy_score(y_te, classes))
+    print("Accuracy:", accuracy_score(y_te, classes))
+    plot_conf_matrix(classes, y_te, normalize=True)
